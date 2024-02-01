@@ -325,11 +325,16 @@ spec:
       managementState: Managed
     modelmeshserving:
       managementState: Managed
+    modelregistry:
+      managementState: Managed
+      registriesNamespace: "odh-model-registries"
     ray:
       managementState: Managed
     trainingoperator:
       managementState: Managed
     workbenches:
+      managementState: Managed
+    modelregistry:
       managementState: Managed
 ```
 
