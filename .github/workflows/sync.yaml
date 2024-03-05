@@ -1,0 +1,32 @@
+name: Sync Branches
+
+on:
+  push:
+    branches:
+      - incubation
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+    - name: Run sync script
+      uses: ykaliuta/cherry-pick-upstream@main
+      with:
+        upstream_branch: incubation
+        downstream_branch: downstream
+        exclude_file: .github/exclude-sync.txt
+
+    - name: Push changes
+      run: |
+        git push origin downstream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
