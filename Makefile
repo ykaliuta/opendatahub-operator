@@ -376,3 +376,18 @@ clean: $(GOLANGCI_LINT)
 	$(GOLANGCI_LINT) cache clean
 	chmod u+w -R $(LOCALBIN) # envtest makes its dir RO
 	rm -rf $(CLEANFILES)
+
+CLEANFILES += webhook
+webhook:
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -o $@ $@-main.go
+
+WEBHOOK_IMG := $(IMAGE_TAG_BASE)-webhook:$(IMG_TAG)
+
+.PHONY: webhook-image-build webhook-image-push webhook-image
+webhook-image-build: webhook
+	$(IMAGE_BUILDER) build --no-cache -f Dockerfiles/webhook.Dockerfile -t $(WEBHOOK_IMG) .
+
+webhook-image-push:
+	$(IMAGE_BUILDER) push $(WEBHOOK_IMG)
+
+webhook-image: webhook-image-build webhook-image-push
