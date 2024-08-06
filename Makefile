@@ -382,6 +382,7 @@ webhook:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -o $@ $@-main.go
 
 WEBHOOK_IMG := $(IMAGE_TAG_BASE)-webhook:$(IMG_TAG)
+WEBHOOK_CFG := config/webhook-standalone
 
 .PHONY: webhook-image-build webhook-image-push webhook-image
 webhook-image-build: webhook
@@ -391,3 +392,13 @@ webhook-image-push:
 	$(IMAGE_BUILDER) push $(WEBHOOK_IMG)
 
 webhook-image: webhook-image-build webhook-image-push
+
+.PHONY: webhook-prepare webhook-deploy webhook-undeploy
+webhook-prepare:
+	cd $(WEBHOOK_CFG) && $(KUSTOMIZE) edit set image webhook=$(WEBHOOK_IMG)
+
+webhook-deploy: webhook-prepare
+	$(KUSTOMIZE) build $(WEBHOOK_CFG) | kubectl apply --namespace $(OPERATOR_NAMESPACE) -f -
+
+webhook-undeploy: webhook-prepare
+	$(KUSTOMIZE) build $(WEBHOOK_CFG) | kubectl delete --namespace $(OPERATOR_NAMESPACE) --ignore-not-found=$(ignore-not-found) -f -
