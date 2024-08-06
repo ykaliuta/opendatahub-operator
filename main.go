@@ -51,8 +51,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	ctrlwebhook "sigs.k8s.io/controller-runtime/pkg/webhook"
-	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	dscv1 "github.com/opendatahub-io/opendatahub-operator/v2/apis/datasciencecluster/v1"
 	dsciv1 "github.com/opendatahub-io/opendatahub-operator/v2/apis/dscinitialization/v1"
@@ -62,7 +60,6 @@ import (
 	dscctrl "github.com/opendatahub-io/opendatahub-operator/v2/controllers/datasciencecluster"
 	dscictrl "github.com/opendatahub-io/opendatahub-operator/v2/controllers/dscinitialization"
 	"github.com/opendatahub-io/opendatahub-operator/v2/controllers/secretgenerator"
-	"github.com/opendatahub-io/opendatahub-operator/v2/controllers/webhook"
 	"github.com/opendatahub-io/opendatahub-operator/v2/pkg/cluster"
 	"github.com/opendatahub-io/opendatahub-operator/v2/pkg/logger"
 	"github.com/opendatahub-io/opendatahub-operator/v2/pkg/upgrade"
@@ -185,10 +182,6 @@ func main() { //nolint:funlen,maintidx
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{ // single pod does not need to have LeaderElection
 		Scheme:  scheme,
 		Metrics: ctrlmetrics.Options{BindAddress: metricsAddr},
-		WebhookServer: ctrlwebhook.NewServer(ctrlwebhook.Options{
-			Port: 9443,
-			// TLSOpts: , // TODO: it was not set in the old code
-		}),
 		HealthProbeBindAddress: probeAddr,
 		Cache:                  cacheOptions,
 		LeaderElection:         enableLeaderElection,
@@ -209,13 +202,6 @@ func main() { //nolint:funlen,maintidx
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-
-	(&webhook.OpenDataHubValidatingWebhook{
-		Client:  mgr.GetClient(),
-		Decoder: admission.NewDecoder(mgr.GetScheme()),
-	}).SetupWithManager(mgr)
-
-	(&webhook.DSCDefaulter{}).SetupWithManager(mgr)
 
 	if err = (&dscictrl.DSCInitializationReconciler{
 		Client:                mgr.GetClient(),
