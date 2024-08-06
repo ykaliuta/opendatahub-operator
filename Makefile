@@ -397,7 +397,7 @@ webhook-image: webhook-image-build webhook-image-push
 webhook-prepare:
 	cd $(WEBHOOK_CFG) && $(KUSTOMIZE) edit set image webhook=$(WEBHOOK_IMG)
 
-webhook-deploy: webhook-prepare
+webhook-deploy: webhook-prepare install
 	$(KUSTOMIZE) build $(WEBHOOK_CFG) | kubectl apply --namespace $(OPERATOR_NAMESPACE) -f -
 
 webhook-undeploy: webhook-prepare
