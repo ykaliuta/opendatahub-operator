@@ -6,7 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
+
+var paramsMapLock sync.Mutex
 
 /*
 overwrite values in components' manifests params.env file
@@ -19,6 +22,9 @@ parameter isUpdateNamespace is used to set if should update namespace  with DSCI
 extraParamsMaps is used to set extra parameters which are not carried from ENV variable. this can be passed per component.
 */
 func ApplyParams(componentPath string, imageParamsMap map[string]string, isUpdateNamespace bool, extraParamsMaps ...map[string]string) error {
+	paramsMapLock.Lock()
+	defer paramsMapLock.Unlock()
+
 	paramsFile := filepath.Join(componentPath, "params.env")
 	// Require params.env at the root folder
 	paramsEnv, err := os.Open(paramsFile)
