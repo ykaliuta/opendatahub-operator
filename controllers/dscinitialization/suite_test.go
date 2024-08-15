@@ -42,6 +42,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	kfdefv1 "github.com/opendatahub-io/opendatahub-operator/apis/kfdef.apps.kubeflow.org/v1"
+	datascienceclusterv1 "github.com/opendatahub-io/opendatahub-operator/v2/apis/datasciencecluster/v1"
 	dscinitializationv1 "github.com/opendatahub-io/opendatahub-operator/v2/apis/dscinitialization/v1"
 	dsci "github.com/opendatahub-io/opendatahub-operator/v2/controllers/dscinitialization"
 	"github.com/opendatahub-io/opendatahub-operator/v2/tests/envtestutil"
@@ -100,6 +101,7 @@ var _ = BeforeSuite(func() {
 
 	utilruntime.Must(clientgoscheme.AddToScheme(testScheme))
 	utilruntime.Must(dscinitializationv1.AddToScheme(testScheme))
+	utilruntime.Must(datascienceclusterv1.AddToScheme(testScheme))
 	utilruntime.Must(netv1.AddToScheme(testScheme))
 	utilruntime.Must(authv1.AddToScheme(testScheme))
 	utilruntime.Must(corev1.AddToScheme(testScheme))
