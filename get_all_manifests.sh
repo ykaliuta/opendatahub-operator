@@ -21,7 +21,7 @@ declare -A COMPONENT_MANIFESTS=(
     ["kserve"]="red-hat-data-services:kserve:rhoai-2.14:config:kserve"
     ["odh-dashboard"]="red-hat-data-services:odh-dashboard:rhoai-2.14:manifests:dashboard"
     ["trainingoperator"]="red-hat-data-services:training-operator:rhoai-2.14:manifests:trainingoperator"
-    ["modelregistry"]="red-hat-data-services:model-registry-operator:main:config:model-registry-operator"
+    ["modelregistry"]="red-hat-data-services:model-registry-operator:rhoai-2.14:config:model-registry-operator"
 )
 
 # Allow overwriting repo using flags component=repo
