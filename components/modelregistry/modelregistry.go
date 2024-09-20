@@ -30,7 +30,7 @@ const DefaultModelRegistryCert = "default-modelregistry-cert"
 
 var (
 	ComponentName                   = "model-registry-operator"
-	DefaultModelRegistriesNamespace = "odh-model-registries"
+	DefaultModelRegistriesNamespace = "rhoai-model-registries"
 	Path                            = deploy.DefaultManifestPath + "/" + ComponentName + "/overlays/odh"
 	// we should not apply this label to the namespace, as it triggered namspace deletion during operator uninstall
 	// modelRegistryLabels = cluster.WithLabels(
@@ -51,8 +51,8 @@ var _ components.ComponentInterface = (*ModelRegistry)(nil)
 type ModelRegistry struct {
 	components.Component `json:""`
 
-	// Namespace for model registries to be installed, configurable only once when model registry is enabled, defaults to "odh-model-registries"
-	// +kubebuilder:default="odh-model-registries"
+	// Namespace for model registries to be installed, configurable only once when model registry is enabled, defaults to "rhoai-model-registries"
+	// +kubebuilder:default="rhoai-model-registries"
 	// +kubebuilder:validation:Pattern="^([a-z0-9]([-a-z0-9]*[a-z0-9])?)?$"
 	// +kubebuilder:validation:MaxLength=63
 	RegistriesNamespace string `json:"registriesNamespace,omitempty"`
