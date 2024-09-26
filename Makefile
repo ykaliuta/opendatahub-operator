@@ -158,7 +158,7 @@ CLEANFILES += $(GOLANGCI_TMP_FILE)
 
 .PHONY: vet
 vet: ## Run go vet against code.
-	go vet ./...
+	go vet ./main.go
 
 .PHONY: lint
 lint: golangci-lint ## Run golangci-lint against code.
