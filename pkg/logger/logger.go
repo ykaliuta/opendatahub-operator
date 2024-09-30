@@ -8,16 +8,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
-// NewNamedLogger creates a new logger for a component.
-// If the mode is set (so can be different from the default one),
-// it will create a new logger with the specified mode's options.
-func NewNamedLogger(log logr.Logger, name string, mode string) logr.Logger {
-	if mode != "" {
-		log = NewLogger(mode)
-	}
-	return log.WithName(name)
-}
-
 func NewLogger(mode string) logr.Logger {
 	raw := NewRawLogger(mode).GetSink()
 	sink := NewSink(raw)
