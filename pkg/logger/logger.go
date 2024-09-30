@@ -2,18 +2,11 @@ package logger
 
 import (
 	"os"
-	"strings"
 
 	"github.com/go-logr/logr"
 	"go.uber.org/zap/zapcore"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
-
-var logLevelMapping = map[string]int{
-	"devel":   0,
-	"default": 1, // default one when not set log-mode
-	"prod":    2,
-}
 
 // NewNamedLogger creates a new logger for a component.
 // If the mode is set (so can be different from the default one),
@@ -25,16 +18,6 @@ func NewNamedLogger(log logr.Logger, name string, mode string) logr.Logger {
 	return log.WithName(name)
 }
 
-// in each controller, to use different log level.
-func LogWithLevel(logger logr.Logger, level string) logr.Logger {
-	level = strings.TrimSpace(level)
-	verbosityLevel, ok := logLevelMapping[level]
-	if !ok {
-		verbosityLevel = 1 // fallback to info level
-	}
-	return logger.V(verbosityLevel)
-}
-
 // in DSC component, to use different mode for logging, e.g. development, production
 // when not set mode it falls to "default" which is used by startup main.go.
 func NewLogger(mode string) logr.Logger {
@@ -44,14 +27,14 @@ func NewLogger(mode string) logr.Logger {
 		opts = zap.Options{
 			Development:     true,
 			StacktraceLevel: zapcore.WarnLevel,
-			Level:           zapcore.InfoLevel,
+			Level:           zapcore.DebugLevel,
 			DestWriter:      os.Stdout,
 		}
 	case "prod", "production": // the least logging verbosity
 		opts = zap.Options{
 			Development:     false,
 			StacktraceLevel: zapcore.ErrorLevel,
-			Level:           zapcore.InfoLevel,
+			Level:           zapcore.ErrorLevel,
 			DestWriter:      os.Stdout,
 			EncoderConfigOptions: []zap.EncoderConfigOption{func(config *zapcore.EncoderConfig) {
 				config.EncodeTime = zapcore.ISO8601TimeEncoder // human readable not epoch
