@@ -18,9 +18,27 @@ func NewNamedLogger(log logr.Logger, name string, mode string) logr.Logger {
 	return log.WithName(name)
 }
 
+func NewLogger(mode string) logr.Logger {
+	raw := NewRawLogger(mode).GetSink()
+	sink := NewSink(raw)
+	return logr.New(sink)
+}
+
+func UpdateLogger(l logr.Logger, mode string) {
+	logrSink := l.GetSink()
+	sink, ok := logrSink.(*Sink)
+	if !ok {
+		l.Info("logger sink is not of type *Sink")
+		return
+	}
+
+	raw := NewRawLogger(mode).GetSink()
+	sink.SetSink(raw)
+}
+
 // in DSC component, to use different mode for logging, e.g. development, production
 // when not set mode it falls to "default" which is used by startup main.go.
-func NewLogger(mode string) logr.Logger {
+func NewRawLogger(mode string) logr.Logger {
 	var opts zap.Options
 	switch mode {
 	case "devel", "development": //  the most logging verbosity
