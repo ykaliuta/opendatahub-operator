@@ -44,7 +44,6 @@ import (
 	odhrec "github.com/opendatahub-io/opendatahub-operator/v2/pkg/controller/reconciler"
 	odhtypes "github.com/opendatahub-io/opendatahub-operator/v2/pkg/controller/types"
 	"github.com/opendatahub-io/opendatahub-operator/v2/pkg/deploy"
-	ctrlogger "github.com/opendatahub-io/opendatahub-operator/v2/pkg/logger"
 	"github.com/opendatahub-io/opendatahub-operator/v2/pkg/metadata/labels"
 )
 
@@ -285,11 +284,6 @@ func (a *SupportDevFlagsAction) Execute(ctx context.Context, rr *odhtypes.Reconc
 		if manifestConfig.SourcePath != "" {
 			rr.Manifests[rr.Platform] = filepath.Join(deploy.DefaultManifestPath, ComponentNameUpstream, manifestConfig.SourcePath)
 		}
-	}
-
-	if rr.DSCI.Spec.DevFlags != nil {
-		mode := rr.DSCI.Spec.DevFlags.LogMode
-		a.Log = ctrlogger.NewNamedLogger(logf.FromContext(ctx), ComponentName, mode)
 	}
 
 	return nil
